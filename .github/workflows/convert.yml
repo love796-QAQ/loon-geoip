@@ -40,14 +40,20 @@ jobs:
 
           # 使用 jq 格式化输出
           jq -r '
-            .rules[].ip_cidr[] |
-            if test("^\\d{1,3}(\\.\\d{1,3}){3}/\\d{1,2}$") then
-              "IP-CIDR,\(.)"
-            elif test("^[0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){1,7}$/") then
-              "IP-CIDR6,\(.)"
-            else
-              empty
-            end
+            .rules[] |
+            (.ip_cidr // empty | 
+              if type == "array" then 
+                .[] | if test("^\\d{1,3}(\\.\\d{1,3}){3}/\\d{1,2}$") then "IP-CIDR,\(.)" 
+                       elif test("^[0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){1,7}$") then "IP-CIDR6,\(.)" 
+                       else empty 
+                       end 
+              else 
+                if test("^\\d{1,3}(\\.\\d{1,3}){3}/\\d{1,2}$") then "IP-CIDR,\(.)" 
+                elif test("^[0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){1,7}$") then "IP-CIDR6,\(.)" 
+                else empty 
+                end 
+              end
+            ) // empty
           ' "$temp_output_file" > "$final_output_file"
 
           # 清理临时 .json 文件
