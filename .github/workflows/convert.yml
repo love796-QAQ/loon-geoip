@@ -80,4 +80,4 @@ jobs:
         
         git add *.txt
         git commit -m "Convert .srs files to .txt"
-        git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/love796-QAQ/loon-geosite.git rule-set || echo "Nothing to push"
+        git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/love796-QAQ/loon-geoip.git rule-set || echo "Nothing to push"
